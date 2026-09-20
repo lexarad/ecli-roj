@@ -1,0 +1,40 @@
+{
+  "name": "ecli-roj",
+  "version": "1.0.0",
+  "description": "Validación y detección de citas de jurisprudencia española (ECLI, ROJ) para pipelines de IA legal. Sin dependencias.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "ecli",
+    "roj",
+    "jurisprudencia",
+    "espana",
+    "legaltech",
+    "cendoj",
+    "case-law",
+    "spain",
+    "llm",
+    "hallucination"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lexarad/ecli-roj.git"
+  },
+  "homepage": "https://lexarad.github.io/ecli-roj/",
+  "author": "Zertidox (https://zertidox.com)"
+}

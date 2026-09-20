@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ecli-roj — citas de jurisprudencia española para textos de IA</title>
+<meta name="description" content="Valida identificadores ECLI y ROJ y detecta cuándo un texto atribuye doctrina a una sentencia sin respaldo comprobable. Sin dependencias, ESM, Node 18+.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ctext y=%2213%22 font-size=%2213%22%3E%C2%A7%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://lexarad.github.io/ecli-roj/">
+<style>
+  :root{
+    --papel:#FAF7F0; --tinta:#14181F; --suave:#5A6472; --navy:#1E3A5F;
+    --linea:#E4DED2; --code-bg:#1B2029; --code-fg:#E8E6E1;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --papel:#10141A; --tinta:#ECEAE4; --suave:#9AA4B2; --navy:#8FB2DE;
+      --linea:#242B35; --code-bg:#0A0D12; --code-fg:#E8E6E1;
+    }
+  }
+  :root[data-theme="dark"]{
+    --papel:#10141A; --tinta:#ECEAE4; --suave:#9AA4B2; --navy:#8FB2DE;
+    --linea:#242B35; --code-bg:#0A0D12; --code-fg:#E8E6E1;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--papel); color:var(--tinta);
+    font:17px/1.65 ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px; margin:0 auto; padding:0 16px}
+  header{padding:72px 0 40px; border-bottom:1px solid var(--linea)}
+  h1{font-size:clamp(2rem,6vw,2.75rem); line-height:1.1; letter-spacing:-.02em; margin:0 0 .4em}
+  .lede{font-size:1.15rem; color:var(--suave); margin:0 0 1.5em; max-width:36em}
+  .pills{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 1.5em; padding:0; list-style:none}
+  .pills li{font-size:.82rem; color:var(--suave); border:1px solid var(--linea); border-radius:999px; padding:4px 11px}
+  .cta{display:inline-flex; align-items:center; gap:.5em; background:var(--navy); color:var(--papel);
+       text-decoration:none; font-weight:600; padding:11px 20px; border-radius:8px; font-size:.95rem}
+  .cta.ghost{background:transparent; color:var(--navy); border:1px solid var(--navy)}
+  section{padding:44px 0; border-bottom:1px solid var(--linea)}
+  h2{font-size:1.35rem; letter-spacing:-.01em; margin:0 0 .7em}
+  p{margin:0 0 1em; max-width:38em}
+  blockquote{margin:1.4em 0; padding:14px 18px; border-left:3px solid var(--navy);
+             background:color-mix(in srgb, var(--navy) 7%, transparent); font-style:italic; color:var(--tinta)}
+  pre{background:var(--code-bg); color:var(--code-fg); padding:18px; border-radius:10px;
+      overflow-x:auto; font-size:.86rem; line-height:1.6; margin:1.2em 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  p code,li code,td code{background:color-mix(in srgb, var(--navy) 10%, transparent);
+      padding:1px 5px; border-radius:4px; font-size:.88em}
+  table{width:100%; border-collapse:collapse; font-size:.92rem; margin:1em 0}
+  td,th{text-align:left; padding:9px 0; border-bottom:1px solid var(--linea); vertical-align:top}
+  th{font-size:.78rem; text-transform:uppercase; letter-spacing:.07em; color:var(--suave); font-weight:600}
+  td:first-child{padding-right:18px; white-space:nowrap}
+  a{color:var(--navy)}
+  footer{padding:36px 0 64px; color:var(--suave); font-size:.92rem}
+  footer a{color:var(--navy)}
+  .muted{color:var(--suave); font-size:.92rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>ecli&#8209;roj</h1>
+  <p class="lede">Valida identificadores <strong>ECLI</strong> y <strong>ROJ</strong>, y detecta
+  cuándo un texto atribuye doctrina a una sentencia concreta sin que nadie la haya comprobado.</p>
+  <ul class="pills">
+    <li>Sin dependencias</li><li>ESM</li><li>Node ≥ 18</li><li>MIT</li>
+  </ul>
+  <p>
+    <a class="cta" href="https://github.com/lexarad/ecli-roj">Ver en GitHub</a>
+    <a class="cta ghost" href="https://github.com/lexarad/ecli-roj#uso">Cómo se usa</a>
+  </p>
+</header>
+
+<section>
+  <h2>El problema no es el identificador inventado</h2>
+  <p>Un <code>ECLI</code> mal formado se detecta con una expresión regular. Lo caro es otra cosa:</p>
+  <blockquote>«el Tribunal Constitucional, en su sentencia 190/2020, declaró que…»</blockquote>
+  <p>Esa frase no contiene ningún identificador que validar, suena impecable y es el error más
+  frecuente cuando un modelo de lenguaje redacta en tono divulgativo. Si la sentencia no existe,
+  el texto publica doctrina falsa con toda la apariencia de ser correcta.</p>
+  <p>Por eso este paquete separa dos trabajos: comprobar la <em>forma</em> de un identificador,
+  y comprobar que cada cita del texto tiene <em>respaldo</em> en un identificador verificable.</p>
+</section>
+
+<section>
+  <h2>Uso</h2>
+<pre><code>import { citasSinRespaldo } from 'ecli-roj'
+
+const texto = `
+  Como recuerda la STS 1234/2021, el plazo es de tres meses. Sin embargo,
+  el Tribunal Constitucional, en su sentencia 190/2020, declaró lo contrario.
+`
+
+citasSinRespaldo(texto, ['ROJ: STS 1234/2021'])
+// → [{ cita: 'Tribunal Constitucional, en su sentencia 190/2020', indice: 80 }]
+//   La segunda cita no está respaldada: o se comprueba, o no se publica.</code></pre>
+
+  <table>
+    <tr><th>Función</th><th>Qué hace</th></tr>
+    <tr><td><code>esEcli</code> · <code>esRoj</code></td><td>¿Tiene forma válida?</td></tr>
+    <tr><td><code>parseEcli</code></td><td>Descompone en país, tribunal, año y número.</td></tr>
+    <tr><td><code>parseRoj</code></td><td>Descompone en tribunal, número y año.</td></tr>
+    <tr><td><code>detectarCitas</code></td><td>Todas las referencias a resoluciones del texto.</td></tr>
+    <tr><td><code>citasSinRespaldo</code></td><td>Las que no respalda ningún identificador comprobado.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Qué reconoce</h2>
+  <p>ECLI y ROJ; abreviaturas con lugar o «núm.» por medio (<code>SAP Barcelona núm. 55/2018</code>);
+  nombres desarrollados y coloquiales de tribunal; fechas largas en castellano; asuntos del TJUE
+  y repertorios Aranzadi.</p>
+  <p>La rama de nombres coloquiales existe por un fallo real: un detector que solo reconocía las
+  abreviaturas dejó pasar diez citas inventadas seguidas, todas escritas en la forma que usa un
+  modelo cuando se dirige a un lector no jurista.</p>
+  <p class="muted">Deliberadamente no marca «mi sentencia de divorcio de 2019»: es el caso del
+  propio usuario, no una cita de doctrina. El criterio es fallar del lado seguro — marcar de más
+  cuesta una revisión; marcar de menos publica una sentencia que no existe.</p>
+</section>
+
+<section>
+  <h2>Alcance</h2>
+  <p>Solo jurisdicción española. No consulta ninguna base de datos: comprueba forma y respaldo,
+  no que la resolución exista. Ese contraste hay que hacerlo contra fuente oficial —
+  <a href="https://www.poderjudicial.es/search/">CENDOJ</a> o el
+  <a href="https://e-justice.europa.eu/">buscador ECLI europeo</a> — que es exactamente el paso
+  al que este paquete te obliga.</p>
+</section>
+
+<footer>
+  <p>Publicado con licencia MIT por <a href="https://zertidox.com">Zertidox</a>, plataforma
+  española de tramitación y documentos legales online, donde se usa para que ningún documento
+  salga con una cita que nadie ha comprobado.</p>
+</footer>
+
+</div>
+</body>
+</html>
